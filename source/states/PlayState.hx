@@ -191,8 +191,8 @@ class PlayState extends MusicBeatState
 	public static var chartingMode:Bool = false;
 
 	//Gameplay settings
-	public var healthGain:Float = 1;
-	public var healthLoss:Float = 1;
+	public var healthGain:Float = 0.25;
+	public var healthLoss:Float = 0.25;
 
 	public var guitarHeroSustains:Bool = false;
 	public var instakillOnMiss:Bool = false;
@@ -1651,6 +1651,19 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+
+           if(!paused) {
+
+             if(health <= 0.08){
+
+		     setSongTime(0);
+		     health = 1;
+
+	     }
+
+	   }
+
+		
 		if(!inCutscene && !paused && !freezeCamera) {
 			FlxG.camera.followLerp = 2.4 * cameraSpeed * playbackRate;
 			if(!startingSong && !endingSong && boyfriend.getAnimationName().startsWith('idle')) {
@@ -2927,6 +2940,8 @@ class PlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
+               if(!note.isSustainNote){
+		
 		var result:Dynamic = callOnLuas('opponentNoteHitPre', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('opponentNoteHitPre', [note]);
 
@@ -2963,11 +2978,13 @@ class PlayState extends MusicBeatState
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('opponentNoteHit', [note]);
 
 		if (!note.isSustainNote) invalidateNote(note);
+
+	       }
 	}
 
 	public function goodNoteHit(note:Note):Void
 	{
-		if(note.wasGoodHit) return;
+		if(note.wasGoodHit && !note.isSustainNote) return;
 		if(cpuControlled && note.ignoreNote) return;
 
 		var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
@@ -2995,8 +3012,10 @@ class PlayState extends MusicBeatState
 
 			noteMiss(note);
 			if(!note.noteSplashData.disabled && !note.isSustainNote) spawnNoteSplashOnNote(note);
+			if(!isSus){			
 			if(!note.isSustainNote) invalidateNote(note);
 			return;
+				}			
 		}
 
 		if(!note.noAnimation) {
@@ -3043,10 +3062,12 @@ class PlayState extends MusicBeatState
 		if (guitarHeroSustains && note.isSustainNote) gainHealth = false;
 		if (gainHealth) health += note.hitHealth * healthGain;
 
+		if(!note.isSustainNote){		
 		var result:Dynamic = callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
 		if(result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll) callOnHScript('goodNoteHit', [note]);
 
 		if(!note.isSustainNote) invalidateNote(note);
+		}	
 	}
 
 	public function invalidateNote(note:Note):Void {
