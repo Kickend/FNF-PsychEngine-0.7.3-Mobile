@@ -2847,17 +2847,7 @@ class PlayState extends MusicBeatState
 	   }
 
 		 
-	 }else{
-
-		 for(Note curNote in notes){
-
-		if(curNote == daNote){
-
-			
-			
-		}	
-		 }
-		 }
+	 }
 		 
 	 }
 		
