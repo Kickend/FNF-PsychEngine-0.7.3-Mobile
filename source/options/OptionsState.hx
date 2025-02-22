@@ -13,6 +13,7 @@ class OptionsState extends MusicBeatState
 {
 	var options:Array<String> = ['Controls', 'Gameplay', 'Mobile Options'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var persistentUpdate = false;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 	public static var onPlayState:Bool = false;
