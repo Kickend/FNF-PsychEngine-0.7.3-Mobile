@@ -2838,6 +2838,29 @@ class PlayState extends MusicBeatState
 
 	function noteMiss(daNote:Note):Void { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
 		//Dupe note remove
+
+         if(!daNote.isSustainNote){
+
+           if(daNote.nextNote != null){
+
+             daNote.nextNote.set_multAlpha(0.3);
+	   }
+
+		 
+	 }else{
+
+		 for(Note curNote in notes){
+
+		if(curNote == daNote){
+
+			
+			
+		}	
+
+		 }
+		 
+	 }
+		
 		notes.forEachAlive(function(note:Note) {
 			if (daNote != note && daNote.mustPress && daNote.noteData == note.noteData && daNote.isSustainNote == note.isSustainNote && Math.abs(daNote.strumTime - note.strumTime) < 1)
 				invalidateNote(note);
